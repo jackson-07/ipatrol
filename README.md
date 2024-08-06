@@ -1,11 +1,11 @@
-## iPatrol
+# iPatrol
 
 An application designed to streamline patrol management and incident reporting for emergency service professionals and volunteers.
 
-# ERD
+## ERD
 
-![erd](iPatrol.png)
+![erd](/public/iPatrol.png)
 
-# Component Hierarchy
+## Component Hierarchy
 
-![components](iPatrolReact.png)
+![components](/public/iPatrolReact.png)
