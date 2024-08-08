@@ -2,7 +2,6 @@ const mongoose = require ('mongoose');
 const Schema = mongoose.Schema;
 
 const patrolSchema = new mongoose.Schema({
-    id: { type: Number, required: true, unique: true },
     user: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
     start_time: { type: Date, required: true },
     end_time: { type: Date, required: true },

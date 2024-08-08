@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import sendRequest from '../../utilities/send-request';
 
 export default function PatrolDashBoard () {
 
@@ -6,8 +7,24 @@ export default function PatrolDashBoard () {
     const [formData, setFormData] = useState({
         start_time: '',
         end_time: '',
-        total_hours: ''
+        total_hours: 0
     });
+
+    const [patrols, setPatrols] = useState([]);
+
+    useEffect(() => {
+        fetchPatrols();
+    }, []);
+
+    const fetchPatrols = async () => {
+        try {
+            const response = await fetch('/api/patrols');
+            const data = await response.json();
+            setPatrols(data);
+        } catch (error) {
+            console.error('Error fetching patrols:', error);
+        }
+    };
 
     const toggleForm = () => {
         setShowForm(!showForm)
@@ -17,31 +34,23 @@ export default function PatrolDashBoard () {
         const { name, value } = e.target;
         setFormData(prevState => ({
             ...prevState,
-            [name]: value
+            [name]: name === 'total_hours' ? Number(value): value
         }));
     };
 
     const handleSubmit = async (e) => {
+        console.log(formData)
         e.preventDefault();
         try {
-            const response = await fetch('/api/patrols', {
-                method: 'POST',
-                body: JSON.stringify(formData)
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to create patrol');
-            }
-
-            const data = await response.json();
-            console.log('Patrol created:', data);
-
+            const data = await sendRequest('/api/patrols', 'POST', formData);
             setFormData({
                 start_time: '',
                 end_time: '',
                 total_hours: ''
             });
+
             setShowForm(false);
+
         } catch (error) {
             console.error('Error creating patrol:', error);
             
@@ -93,6 +102,10 @@ export default function PatrolDashBoard () {
                     <button type="submit">Create Patrol</button>
                 </form>
             )}
+
+            <div className="patrols-list">
+                <h2>Your Patrols</h2>
+            </div>
         </div>
     );
 }
