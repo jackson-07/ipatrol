@@ -25,16 +25,34 @@ export default function LoginForm({ setUser }) {
 
   return (
     <div>
-      <div className="form-container">
-        <form autoComplete="off" onSubmit={handleSubmit}>
-          <label>Email</label>
-          <input type="text" name="email" value={credentials.email} onChange={handleChange} required />
-          <label>Password</label>
-          <input type="password" name="password" value={credentials.password} onChange={handleChange} required />
-          <button type="submit">LOG IN</button>
-        </form>
-      </div>
-      <p className="error-message">&nbsp;{error}</p>
+      <form autoComplete="off" onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="email" className="block mb-1 font-medium">Email</label>
+          <input
+            type="text"
+            name="email"
+            value={credentials.email}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
+          />
+        </div>
+        <div>
+          <label htmlFor="password" className="block mb-1 font-medium">Password</label>
+          <input
+            type="password"
+            name="password"
+            value={credentials.password}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
+          />
+        </div>
+        <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-300">
+          LOG IN
+        </button>
+      </form>
+      <p className="mt-4 text-red-500 text-center">{error}</p>
     </div>
   );
 }
