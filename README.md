@@ -5,7 +5,3 @@ An application designed to streamline patrol management and incident reporting f
 ## ERD
 
 ![erd](/public/iPatrol.png)
-
-## Component Hierarchy
-
-![components](/public/iPatrolReact.png)

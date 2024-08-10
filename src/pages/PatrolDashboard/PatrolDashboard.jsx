@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import PatrolForm from '../../components/PatrolForm/PatrolForm';
 import PatrolList from '../../components/PatrolList/PatrolList';
+import EditPatrolForm from '../../components/EditPatrolForm/EditPatrolForm';
 import * as patrolAPI from '../../utilities/patrols-api';
 
 export default function PatrolDashBoard() {
     const [showForm, setShowForm] = useState(false);
     const [patrols, setPatrols] = useState([]);
     const [sortedPatrols, setSortedPatrols] = useState({ upcoming: [], completed: [] });
+    const [editingPatrol, setEditingPatrol] = useState(null);
 
     useEffect(() => {
         fetchPatrols();
@@ -57,27 +59,54 @@ export default function PatrolDashBoard() {
         }
     };
 
+    const handleEdit = (patrol) => {
+        setEditingPatrol(patrol);
+        setShowForm(false);
+    };
+
+    const handleUpdate = async (updatedPatrol) => {
+        try {
+            await patrolAPI.updatePatrol(updatedPatrol._id, updatedPatrol);
+            setEditingPatrol(null);
+            fetchPatrols();
+        } catch (error) {
+            console.error('Error updating patrol:', error);
+        }
+    };
+
     return (
         <div className="container mx-auto px-4 py-8">
             <button
-                onClick={() => setShowForm(!showForm)}
+                onClick={() => {
+                    setShowForm(!showForm);
+                    setEditingPatrol(null);
+                }}
                 className="bg-violet-500 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded mb-4"
             >
                 {showForm ? 'Back' : 'Create New Patrol'}
             </button>
 
             {showForm && <PatrolForm onSubmit={handleSubmit} onCancel={() => setShowForm(false)} />}
+            {editingPatrol && (
+                <EditPatrolForm
+                    patrol={editingPatrol}
+                    onSubmit={handleUpdate}
+                    onCancel={() => setEditingPatrol(null)}
+                />
+            )}
 
             <div className="patrols-list mt-8">
                 <PatrolList
                     patrols={sortedPatrols.upcoming}
                     onDelete={handleDelete}
+                    onEdit={handleEdit}
                     title="Upcoming Patrols"
                 />
                 <br />
                 <PatrolList
                     patrols={sortedPatrols.completed}
                     onDelete={handleDelete}
+                    onEdit={handleEdit}
                     title="Completed Patrols"
                 />
             </div>

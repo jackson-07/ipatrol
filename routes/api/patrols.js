@@ -6,5 +6,6 @@ const ensureLoggedIn = require('../../config/ensureLoggedIn');
 router.get('/', ensureLoggedIn, patrolCtrl.getPatrol);
 router.post('/', ensureLoggedIn, patrolCtrl.createPatrol);
 router.delete('/:id', ensureLoggedIn, patrolCtrl.deletePatrol);
+router.put('/:id', ensureLoggedIn, patrolCtrl.updatePatrol)
 
 module.exports = router;

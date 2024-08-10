@@ -1,7 +1,7 @@
 import DeleteButton from '../DeleteButton/DeleteButton';
 import EditButton from '../EditButton/EditButton';
 
-export default function PatrolItem({ patrol, onDelete }) {
+export default function PatrolItem({ patrol, onDelete, onEdit }) {
     return (
         <li className="border p-4 rounded-lg shadow bg-gray-100 flex justify-between items-center">
             <div>
@@ -10,7 +10,7 @@ export default function PatrolItem({ patrol, onDelete }) {
                 <p><strong>Total Hours:</strong> {patrol.total_hours}</p>
             </div>
             <div className="flex space-x-2">
-                <EditButton />
+                <EditButton onClick={() => onEdit(patrol)} />
                 <DeleteButton onClick={() => onDelete(patrol._id)} />
             </div>
         </li>

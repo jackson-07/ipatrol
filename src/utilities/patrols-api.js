@@ -12,3 +12,7 @@ export function createPatrol(patrolData) {
 export function deletePatrol(patrolId) {
   return sendRequest(`${BASE_URL}/${patrolId}`, 'DELETE');
 }
+
+export function updatePatrol(patrolId, patrolData) {
+    return sendRequest(`${BASE_URL}/${patrolId}`, 'PUT', patrolData);
+}
