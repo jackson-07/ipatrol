@@ -1,18 +1,12 @@
-import { useState, useEffect } from 'react';
-import DeleteButton from '../../components/DeleteButton/DeleteButton';
-import EditButton from '../../components/EditButton/EditButton';
-import sendRequest from '../../utilities/send-request';
+import React, { useState, useEffect } from 'react';
+import PatrolForm from '../../components/PatrolForm/PatrolForm';
+import PatrolList from '../../components/PatrolList/PatrolList';
 import * as patrolAPI from '../../utilities/patrols-api';
 
 export default function PatrolDashBoard() {
     const [showForm, setShowForm] = useState(false);
-    const [formData, setFormData] = useState({
-        start_time: '',
-        end_time: '',
-        total_hours: 0
-    });
     const [patrols, setPatrols] = useState([]);
-    const [sortedPatrols, setSortedPatrols] = useState({ upcoming: [], completed: [] })
+    const [sortedPatrols, setSortedPatrols] = useState({ upcoming: [], completed: [] });
 
     useEffect(() => {
         fetchPatrols();
@@ -21,56 +15,6 @@ export default function PatrolDashBoard() {
     useEffect(() => {
         setSortedPatrols(sortPatrols(patrols));
     }, [patrols]);
-
-    useEffect(() => {
-        setSortedPatrols(prevSorted => ({
-            ...prevSorted,
-            upcoming: [...prevSorted.upcoming].sort((a, b) =>
-                new Date(a.start_time) - new Date(b.start_time)
-            )
-        }));
-    }, [sortedPatrols.upcoming]);
-
-    useEffect(() => {
-        setSortedPatrols(prevSorted => ({
-            ...prevSorted,
-            completed: [...prevSorted.completed].sort((a, b) =>
-                new Date(b.start_time) - new Date(a.start_time)
-            )
-        }));
-    }, [sortedPatrols.completed]);
-
-    const toggleForm = () => {
-        setShowForm(!showForm)
-    };
-
-    const handleForm = (e) => {
-        const { name, value } = e.target;
-        setFormData(prevState => ({
-            ...prevState,
-            [name]: name === 'total_hours' ? Number(value) : value
-        }));
-    };
-
-    const handleSubmit = async (e) => {
-        console.log(formData)
-        e.preventDefault();
-        try {
-            const data = await sendRequest('/api/patrols', 'POST', formData);
-            setFormData({
-                start_time: '',
-                end_time: '',
-                total_hours: ''
-            });
-
-            setShowForm(false);
-            fetchPatrols();
-
-        } catch (error) {
-            console.error('Error creating patrol:', error);
-
-        }
-    };
 
     const fetchPatrols = async () => {
         try {
@@ -94,118 +38,48 @@ export default function PatrolDashBoard() {
         }, { upcoming: [], completed: [] });
     };
 
-    const handleDelete = async(patrolId) => {
+    const handleSubmit = async (formData) => {
         try {
-            await patrolAPI.deletePatrol(patrolId)
+            await patrolAPI.createPatrol(formData);
+            setShowForm(false);
             fetchPatrols();
         } catch (error) {
-            console.error('Error deleting patrols:', error);
+            console.error('Error creating patrol:', error);
         }
-    }
+    };
+
+    const handleDelete = async (patrolId) => {
+        try {
+            await patrolAPI.deletePatrol(patrolId);
+            fetchPatrols();
+        } catch (error) {
+            console.error('Error deleting patrol:', error);
+        }
+    };
 
     return (
         <div className="container mx-auto px-4 py-8">
             <button
-                onClick={toggleForm}
+                onClick={() => setShowForm(!showForm)}
                 className="bg-violet-500 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded mb-4"
             >
-                {showForm ? 'Cancel' : 'Create New Patrol'}
+                {showForm ? 'Back' : 'Create New Patrol'}
             </button>
 
-            {showForm && (
-                <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-                    <div className="mb-4">
-                        <label htmlFor="start_time" className="block text-gray-700 text-sm font-bold mb-2">Start Time:</label>
-                        <input
-                            type="datetime-local"
-                            id="start_time"
-                            name="start_time"
-                            value={formData.start_time}
-                            onChange={handleForm}
-                            required
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label htmlFor="end_time" className="block text-gray-700 text-sm font-bold mb-2">End Time:</label>
-                        <input
-                            type="datetime-local"
-                            id="end_time"
-                            name="end_time"
-                            value={formData.end_time}
-                            onChange={handleForm}
-                            required
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label htmlFor="total_hours" className="block text-gray-700 text-sm font-bold mb-2">Total Hours:</label>
-                        <input
-                            type="number"
-                            id="total_hours"
-                            name="total_hours"
-                            value={formData.total_hours}
-                            onChange={handleForm}
-                            required
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        />
-                    </div>
-                    <button type="submit" className="bg-violet-500 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                        Create Patrol
-                    </button>
-                </form>
-            )}
+            {showForm && <PatrolForm onSubmit={handleSubmit} onCancel={() => setShowForm(false)} />}
 
             <div className="patrols-list mt-8">
-                <h2 className="text-2xl font-bold mb-4 text-violet-600">Upcoming Patrols</h2>
-                {sortedPatrols.upcoming.length === 0 ? (
-                    <p>No upcoming patrols.</p>
-                ) : (
-                    <ul className="space-y-4">
-                        {sortedPatrols.upcoming.map((patrol) => (
-                            <li key={patrol._id} className="border p-4 rounded-lg shadow bg-gray-100 flex justify-between items-center">
-                                <div>
-                                    <p><strong>Start Time:</strong> {new Date(patrol.start_time).toLocaleString()}</p>
-                                    <p><strong>End Time:</strong> {new Date(patrol.end_time).toLocaleString()}</p>
-                                    <p><strong>Total Hours:</strong> {patrol.total_hours}</p>
-                                </div>
-                                <div className="flex space-x-2">
-                                    <button className="border-violet-500 text-violet-500 hover:bg-violet-500 hover:text-white font-bold py-2 px-4 rounded">
-                                        <EditButton />
-                                    </button>
-                                    <button className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white font-bold py-2 px-4 rounded">
-                                        <DeleteButton onClick={() => handleDelete(patrol._id)} />
-                                    </button>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                )}
-
-                <h2 className="text-2xl font-bold mb-4 mt-8 text-violet-600">Completed Patrols</h2>
-                {sortedPatrols.completed.length === 0 ? (
-                    <p>No completed patrols.</p>
-                ) : (
-                    <ul className="space-y-4">
-                        {sortedPatrols.completed.map((patrol) => (
-                            <li key={patrol._id} className="border p-4 rounded-lg shadow bg-gray-100 flex justify-between items-center">
-                                <div>
-                                    <p><strong>Start Time:</strong> {new Date(patrol.start_time).toLocaleString()}</p>
-                                    <p><strong>End Time:</strong> {new Date(patrol.end_time).toLocaleString()}</p>
-                                    <p><strong>Total Hours:</strong> {patrol.total_hours}</p>
-                                </div>
-                                <div className="flex space-x-2">
-                                    <button className="border-violet-500 text-violet-500 hover:bg-violet-500 hover:text-white font-bold py-2 px-4 rounded">
-                                        <EditButton />
-                                    </button>
-                                    <button className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white font-bold py-2 px-4 rounded">
-                                        <DeleteButton onClick={() => handleDelete(patrol._id)} />
-                                    </button>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                )}
+                <PatrolList
+                    patrols={sortedPatrols.upcoming}
+                    onDelete={handleDelete}
+                    title="Upcoming Patrols"
+                />
+                <br />
+                <PatrolList
+                    patrols={sortedPatrols.completed}
+                    onDelete={handleDelete}
+                    title="Completed Patrols"
+                />
             </div>
         </div>
     );

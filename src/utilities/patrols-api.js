@@ -5,6 +5,10 @@ export function getPatrols() {
   return sendRequest(BASE_URL, 'GET');
 }
 
+export function createPatrol(patrolData) {
+  return sendRequest(BASE_URL, 'POST', patrolData);
+}
+
 export function deletePatrol(patrolId) {
-    return sendRequest(`${BASE_URL}/${patrolId}`, 'DELETE');
+  return sendRequest(`${BASE_URL}/${patrolId}`, 'DELETE');
 }
