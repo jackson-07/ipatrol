@@ -1,29 +1,42 @@
 import { useState, useEffect } from 'react';
 import sendRequest from '../../utilities/send-request';
+import * as patrolAPI from '../../utilities/patrols-api'
 
-export default function PatrolDashBoard () {
+export default function PatrolDashBoard() {
     const [showForm, setShowForm] = useState(false);
     const [formData, setFormData] = useState({
         start_time: '',
         end_time: '',
         total_hours: 0
     });
-
     const [patrols, setPatrols] = useState([]);
+    const [sortedPatrols, setSortedPatrols] = useState({ upcoming: [], completed: [] })
 
     useEffect(() => {
         fetchPatrols();
     }, []);
 
-    const fetchPatrols = async () => {
-        try {
-            const response = await fetch('/api/patrols');
-            const data = await response.json();
-            setPatrols(data);
-        } catch (error) {
-            console.error('Error fetching patrols:', error);
-        }
-    };
+    useEffect(() => {
+        setSortedPatrols(sortPatrols(patrols));
+    }, [patrols]);
+
+    useEffect(() => {
+        setSortedPatrols(prevSorted => ({
+            ...prevSorted,
+            upcoming: [...prevSorted.upcoming].sort((a, b) => 
+                new Date(a.start_time) - new Date(b.start_time)
+            )
+        }));
+    }, [sortedPatrols.upcoming]);
+
+    useEffect(() => {
+        setSortedPatrols(prevSorted => ({
+            ...prevSorted,
+            completed: [...prevSorted.completed].sort((a, b) => 
+                new Date(b.start_time) - new Date(a.start_time)
+            )
+        }));
+    }, [sortedPatrols.completed]);
 
     const toggleForm = () => {
         setShowForm(!showForm)
@@ -33,7 +46,7 @@ export default function PatrolDashBoard () {
         const { name, value } = e.target;
         setFormData(prevState => ({
             ...prevState,
-            [name]: name === 'total_hours' ? Number(value): value
+            [name]: name === 'total_hours' ? Number(value) : value
         }));
     };
 
@@ -49,17 +62,39 @@ export default function PatrolDashBoard () {
             });
 
             setShowForm(false);
+            fetchPatrols();
 
         } catch (error) {
             console.error('Error creating patrol:', error);
-            
+
         }
+    };
+
+    const fetchPatrols = async () => {
+        try {
+            const response = await patrolAPI.getPatrols();
+            setPatrols(response);
+        } catch (error) {
+            console.error('Error fetching patrols:', error);
+        }
+    };
+
+    const sortPatrols = (patrols) => {
+        const now = new Date();
+        return patrols.reduce((acc, patrol) => {
+            const patrolStartDate = new Date(patrol.start_time);
+            if (patrolStartDate > now) {
+                acc.upcoming.push(patrol);
+            } else {
+                acc.completed.push(patrol);
+            }
+            return acc;
+        }, { upcoming: [], completed: [] });
     };
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold mb-6 text-center text-black-600">Dashboard</h1>
-            <button 
+            <button
                 onClick={toggleForm}
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
             >
@@ -111,8 +146,35 @@ export default function PatrolDashBoard () {
             )}
 
             <div className="patrols-list mt-8">
-                <h2 className="text-2xl font-bold mb-4 text-blue-600">Your Patrols</h2>
-                
+                <h2 className="text-2xl font-bold mb-4 text-blue-600">Upcoming Patrols</h2>
+                {sortedPatrols.upcoming.length === 0 ? (
+                    <p>No upcoming patrols.</p>
+                ) : (
+                    <ul className="space-y-4">
+                        {sortedPatrols.upcoming.map((patrol) => (
+                            <li key={patrol._id} className="border p-4 rounded-lg shadow bg-gray-100">
+                                <p><strong>Start Time:</strong> {new Date(patrol.start_time).toLocaleString()}</p>
+                                <p><strong>End Time:</strong> {new Date(patrol.end_time).toLocaleString()}</p>
+                                <p><strong>Total Hours:</strong> {patrol.total_hours}</p>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+
+                <h2 className="text-2xl font-bold mb-4 mt-8 text-blue-600">Completed Patrols</h2>
+                {sortedPatrols.completed.length === 0 ? (
+                    <p>No completed patrols.</p>
+                ) : (
+                    <ul className="space-y-4">
+                        {sortedPatrols.completed.map((patrol) => (
+                            <li key={patrol._id} className="border p-4 rounded-lg shadow bg-gray-100">
+                                <p><strong>Start Time:</strong> {new Date(patrol.start_time).toLocaleString()}</p>
+                                <p><strong>End Time:</strong> {new Date(patrol.end_time).toLocaleString()}</p>
+                                <p><strong>Total Hours:</strong> {patrol.total_hours}</p>
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </div>
         </div>
     );

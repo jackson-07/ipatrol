@@ -1,13 +1,13 @@
 const Patrol = require ("../../models/patrol");
 
 module.exports = {
-    getAll,
+    getPatrol,
     create, 
 }
 
-async function getAll(req, res) {
+async function getPatrol(req, res) {
     try {
-        const allPatrols = await Patrol.find({ user: req.user._id }).sort("-start_time");
+        const allPatrols = await Patrol.find({ user: req.user._id }).sort("start_time");
         res.json(allPatrols);
     } catch (error) {
         res.status(400).json(error);
