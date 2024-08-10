@@ -10,7 +10,7 @@ export default function AuthPage({ setUser }) {
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h1 className="text-3xl font-bold mb-6 text-center">Welcome</h1>
         <button 
-          className="w-full mb-4 bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-300"
+          className="w-full mb-4 bg-violet-500 text-white py-2 rounded hover:bg-violet-600 transition duration-300"
           onClick={() => setShowSignUp(!showSignUp)}
         >
           {showSignUp ? 'Log In' : 'Sign Up'}

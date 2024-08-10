@@ -82,10 +82,10 @@ export default class SignUpForm extends Component {
             type="submit" 
             disabled={disable}
             className={`w-full py-2 rounded transition duration-300 ${
-              disable ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'
+              disable ? 'bg-gray-300 cursor-not-allowed' : 'bg-violet-500 text-white hover:bg-violet-600'
             }`}
           >
-            SIGN UP
+            Sign Up
           </button>
         </form>
         <p className="mt-4 text-red-500 text-center">{this.state.error}</p>

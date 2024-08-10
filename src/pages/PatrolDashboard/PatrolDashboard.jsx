@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import DeleteButton from '../../components/DeleteButton/DeleteButton';
+import EditButton from '../../components/EditButton/EditButton';
 import sendRequest from '../../utilities/send-request';
-import * as patrolAPI from '../../utilities/patrols-api'
+import * as patrolAPI from '../../utilities/patrols-api';
 
 export default function PatrolDashBoard() {
     const [showForm, setShowForm] = useState(false);
@@ -23,7 +25,7 @@ export default function PatrolDashBoard() {
     useEffect(() => {
         setSortedPatrols(prevSorted => ({
             ...prevSorted,
-            upcoming: [...prevSorted.upcoming].sort((a, b) => 
+            upcoming: [...prevSorted.upcoming].sort((a, b) =>
                 new Date(a.start_time) - new Date(b.start_time)
             )
         }));
@@ -32,7 +34,7 @@ export default function PatrolDashBoard() {
     useEffect(() => {
         setSortedPatrols(prevSorted => ({
             ...prevSorted,
-            completed: [...prevSorted.completed].sort((a, b) => 
+            completed: [...prevSorted.completed].sort((a, b) =>
                 new Date(b.start_time) - new Date(a.start_time)
             )
         }));
@@ -92,11 +94,20 @@ export default function PatrolDashBoard() {
         }, { upcoming: [], completed: [] });
     };
 
+    const handleDelete = async(patrolId) => {
+        try {
+            await patrolAPI.deletePatrol(patrolId)
+            fetchPatrols();
+        } catch (error) {
+            console.error('Error deleting patrols:', error);
+        }
+    }
+
     return (
         <div className="container mx-auto px-4 py-8">
             <button
                 onClick={toggleForm}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
+                className="bg-violet-500 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded mb-4"
             >
                 {showForm ? 'Cancel' : 'Create New Patrol'}
             </button>
@@ -139,38 +150,58 @@ export default function PatrolDashBoard() {
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
                     </div>
-                    <button type="submit" className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    <button type="submit" className="bg-violet-500 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                         Create Patrol
                     </button>
                 </form>
             )}
 
             <div className="patrols-list mt-8">
-                <h2 className="text-2xl font-bold mb-4 text-blue-600">Upcoming Patrols</h2>
+                <h2 className="text-2xl font-bold mb-4 text-violet-600">Upcoming Patrols</h2>
                 {sortedPatrols.upcoming.length === 0 ? (
                     <p>No upcoming patrols.</p>
                 ) : (
                     <ul className="space-y-4">
                         {sortedPatrols.upcoming.map((patrol) => (
-                            <li key={patrol._id} className="border p-4 rounded-lg shadow bg-gray-100">
-                                <p><strong>Start Time:</strong> {new Date(patrol.start_time).toLocaleString()}</p>
-                                <p><strong>End Time:</strong> {new Date(patrol.end_time).toLocaleString()}</p>
-                                <p><strong>Total Hours:</strong> {patrol.total_hours}</p>
+                            <li key={patrol._id} className="border p-4 rounded-lg shadow bg-gray-100 flex justify-between items-center">
+                                <div>
+                                    <p><strong>Start Time:</strong> {new Date(patrol.start_time).toLocaleString()}</p>
+                                    <p><strong>End Time:</strong> {new Date(patrol.end_time).toLocaleString()}</p>
+                                    <p><strong>Total Hours:</strong> {patrol.total_hours}</p>
+                                </div>
+                                <div className="flex space-x-2">
+                                    <button className="border-violet-500 text-violet-500 hover:bg-violet-500 hover:text-white font-bold py-2 px-4 rounded">
+                                        <EditButton />
+                                    </button>
+                                    <button className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white font-bold py-2 px-4 rounded">
+                                        <DeleteButton onClick={() => handleDelete(patrol._id)} />
+                                    </button>
+                                </div>
                             </li>
                         ))}
                     </ul>
                 )}
 
-                <h2 className="text-2xl font-bold mb-4 mt-8 text-blue-600">Completed Patrols</h2>
+                <h2 className="text-2xl font-bold mb-4 mt-8 text-violet-600">Completed Patrols</h2>
                 {sortedPatrols.completed.length === 0 ? (
                     <p>No completed patrols.</p>
                 ) : (
                     <ul className="space-y-4">
                         {sortedPatrols.completed.map((patrol) => (
-                            <li key={patrol._id} className="border p-4 rounded-lg shadow bg-gray-100">
-                                <p><strong>Start Time:</strong> {new Date(patrol.start_time).toLocaleString()}</p>
-                                <p><strong>End Time:</strong> {new Date(patrol.end_time).toLocaleString()}</p>
-                                <p><strong>Total Hours:</strong> {patrol.total_hours}</p>
+                            <li key={patrol._id} className="border p-4 rounded-lg shadow bg-gray-100 flex justify-between items-center">
+                                <div>
+                                    <p><strong>Start Time:</strong> {new Date(patrol.start_time).toLocaleString()}</p>
+                                    <p><strong>End Time:</strong> {new Date(patrol.end_time).toLocaleString()}</p>
+                                    <p><strong>Total Hours:</strong> {patrol.total_hours}</p>
+                                </div>
+                                <div className="flex space-x-2">
+                                    <button className="border-violet-500 text-violet-500 hover:bg-violet-500 hover:text-white font-bold py-2 px-4 rounded">
+                                        <EditButton />
+                                    </button>
+                                    <button className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white font-bold py-2 px-4 rounded">
+                                        <DeleteButton onClick={() => handleDelete(patrol._id)} />
+                                    </button>
+                                </div>
                             </li>
                         ))}
                     </ul>

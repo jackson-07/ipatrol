@@ -2,7 +2,8 @@ const Patrol = require ("../../models/patrol");
 
 module.exports = {
     getPatrol,
-    create, 
+    createPatrol,
+    deletePatrol, 
 }
 
 async function getPatrol(req, res) {
@@ -15,8 +16,7 @@ async function getPatrol(req, res) {
 
 }
 
-async function create(req, res) {
-    console.log(req.body)
+async function createPatrol(req, res) {
     try {
       const patrol = await Patrol.create({
         ...req.body,
@@ -25,6 +25,19 @@ async function create(req, res) {
       res.status(201).json(patrol);
     } catch (error) {
         console.log(error)
-      res.status(400).json(error);
+        res.status(400).json(error);
     }
-  }
+}
+
+async function deletePatrol(req, res) {
+    try {
+        const patrol = await Patrol.findOneAndDelete({
+            _id: req.params.id, 
+            user:req.user._id
+        });
+        res.status(201).json(patrol)
+    } catch (error) {
+        console.log(error)
+        res.status(400).json(error);
+    }
+}

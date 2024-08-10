@@ -48,8 +48,8 @@ export default function LoginForm({ setUser }) {
             className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
           />
         </div>
-        <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-300">
-          LOG IN
+        <button type="submit" className="w-full bg-violet-500 text-white py-2 rounded hover:bg-violet-600 transition duration-300">
+          Log In
         </button>
       </form>
       <p className="mt-4 text-red-500 text-center">{error}</p>
