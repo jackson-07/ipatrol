@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PatrolForm from '../../components/PatrolForm/PatrolForm';
 import PatrolList from '../../components/PatrolList/PatrolList';
 import EditPatrolForm from '../../components/EditPatrolForm/EditPatrolForm';
+import CreatePatrolForm from '../../components/CreatePatrol/CreatePatrol';
 import * as patrolAPI from '../../utilities/patrols-api';
 
 export default function PatrolDashBoard() {
@@ -76,17 +77,24 @@ export default function PatrolDashBoard() {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <button
-                onClick={() => {
-                    setShowForm(!showForm);
-                    setEditingPatrol(null);
-                }}
-                className="bg-violet-500 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded mb-4"
-            >
-                {showForm ? 'Back' : 'Create New Patrol'}
-            </button>
+            {!showForm && !editingPatrol && (
+                <button
+                    onClick={() => {
+                        setShowForm(true);
+                        setEditingPatrol(null);
+                    }}
+                    className="bg-violet-500 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded mb-4"
+                >
+                    Create New Patrol
+                </button>
+            )}
 
-            {showForm && <PatrolForm onSubmit={handleSubmit} onCancel={() => setShowForm(false)} />}
+            {showForm && !editingPatrol && (
+                <CreatePatrolForm 
+                    onSubmit={handleSubmit} 
+                    onCancel={() => setShowForm(false)} 
+                />
+            )}
             {editingPatrol && (
                 <EditPatrolForm
                     patrol={editingPatrol}
@@ -113,3 +121,4 @@ export default function PatrolDashBoard() {
         </div>
     );
 }
+
