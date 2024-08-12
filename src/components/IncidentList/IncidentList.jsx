@@ -1,0 +1,21 @@
+import IncidentItem from '../IncidentItem/IncidentItem';
+
+export default function IncidentList({ incidents, title }) {
+    return (
+        <div>
+            <h2 className="text-2xl font-bold mb-4 text-violet-600">{title}</h2>
+            {incidents.length === 0 ? (
+                <p>No incidents to display.</p>
+            ) : (
+                <ul className="space-y-4">
+                    {incidents.map((incident) => (
+                        <IncidentItem 
+                            key={incident._id} 
+                            incident={incident} 
+                        />
+                    ))}
+                </ul>
+            )}
+        </div>
+    );
+}

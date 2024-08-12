@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import PatrolForm from '../../components/PatrolForm/PatrolForm';
 import PatrolList from '../../components/PatrolList/PatrolList';
 import EditPatrolForm from '../../components/EditPatrolForm/EditPatrolForm';
-import CreatePatrolForm from '../../components/CreatePatrol/CreatePatrol';
+import CreatePatrolForm from '../../components/CreatePatrolForm/CreatePatrolForm';
 import * as patrolAPI from '../../utilities/patrols-api';
 
 export default function PatrolDashBoard() {
@@ -83,8 +82,7 @@ export default function PatrolDashBoard() {
                         setShowForm(true);
                         setEditingPatrol(null);
                     }}
-                    className="bg-violet-500 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded mb-4"
-                >
+                    className="bg-violet-500 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded mb-4">
                     Create New Patrol
                 </button>
             )}
