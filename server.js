@@ -22,6 +22,7 @@ const port = process.env.PORT || 3001;
 // Put API routes here, before the "catch all" route
 app.use('/api/users', require('./routes/api/users'));
 app.use('/api/patrols', require('./routes/api/patrols'));
+app.use('/api/incidents', require('./routes/api/incidents'));
 
 app.get('/*', function(req, res) {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));

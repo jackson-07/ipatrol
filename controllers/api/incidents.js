@@ -1,4 +1,4 @@
-const Incident = requre('../../models/incident');
+const Incident = require('../../models/incident');
 
 module.exports = {
     getIncident,
