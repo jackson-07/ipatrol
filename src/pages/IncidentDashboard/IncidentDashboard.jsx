@@ -5,13 +5,11 @@ import EditIncidentForm from '../../components/EditIncidentForm/EditIncidentForm
 import * as incidentAPI from '../../utilities/incidents-api';
 import * as patrolAPI from '../../utilities/patrols-api';
 
-
 export default function IncidentDashboard() {
     const [showForm, setShowForm] = useState(false);
     const [incidents, setIncidents] = useState([]);
     const [patrols, setPatrols] = useState([]);
     const [editingIncident, setEditingIncident] = useState(null);
-
 
     // consider using useContext to stop prop drilling patrol useState
 
@@ -51,7 +49,7 @@ export default function IncidentDashboard() {
     const handleDelete = async (incidentId) => {
         try {
             await incidentAPI.deleteIncident(incidentId);
-            fetchPatrols();
+            fetchIncidents();
         } catch (error) {
             console.error('Error deleting incident:', error);
         }
