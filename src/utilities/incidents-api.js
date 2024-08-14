@@ -13,6 +13,6 @@ export function getIncidents() {
     return sendRequest(`${BASE_URL}/${incidentId}`, 'DELETE');
   }
   
-//   export function updateIncident(incidentId, incidentData) {
-//       return sendRequest(`${BASE_URL}/${incidentId}`, 'PUT', incidentData);
-//   }
+  export function updateIncident(incidentId, incidentData) {
+      return sendRequest(`${BASE_URL}/${incidentId}`, 'PUT', incidentData);
+  }

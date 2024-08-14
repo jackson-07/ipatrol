@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import IncidentList from '../../components/IncidentList/IncidentList';
-import CreateIncidentForm from '../../components/CreateIncidentForm/CreateIncidentForm'
+import CreateIncidentForm from '../../components/CreateIncidentForm/CreateIncidentForm';
+import EditIncidentForm from '../../components/EditIncidentForm/EditIncidentForm'
 import * as incidentAPI from '../../utilities/incidents-api';
 import * as patrolAPI from '../../utilities/patrols-api';
 
@@ -9,6 +10,8 @@ export default function IncidentDashboard() {
     const [showForm, setShowForm] = useState(false);
     const [incidents, setIncidents] = useState([]);
     const [patrols, setPatrols] = useState([]);
+    const [editingIncident, setEditingIncident] = useState(null);
+
 
     // consider using useContext to stop prop drilling patrol useState
 
@@ -54,21 +57,47 @@ export default function IncidentDashboard() {
         }
     };
 
+    const handleEdit = (incident) => {
+        setEditingIncident(incident);
+        setShowForm(false);
+    };
+
+    const handleUpdate = async (updatedIncident) => {
+        try {
+            await incidentAPI.updateIncident(updatedIncident._id, updatedIncident);
+            setEditingIncident(null);
+            fetchIncidents();
+        } catch (error) {
+            console.error('Error updating incident:', error);
+        }
+    };
+
     return (
         <div className="container mx-auto px-4 py-8">
-            {!showForm && (
+            {!showForm && !editingIncident && (
                 <button
-                    onClick={() => setShowForm(true)}
+                    onClick={() => {
+                        setShowForm(true);
+                        setEditingIncident(null);
+                    }}
                     className="bg-violet-500 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded mb-4">
                     Create New Incident
                 </button>
             )}
 
-            {showForm && (
+            {showForm && !editingIncident && (
                 <CreateIncidentForm 
                     patrols={patrols}
                     onSubmit={handleSubmit} 
                     onCancel={() => setShowForm(false)} 
+                />
+            )}
+            {editingIncident && (
+                <EditIncidentForm
+                    incident={editingIncident}
+                    patrols={patrols}
+                    onSubmit={handleUpdate}
+                    onCancel={() => setEditingIncident(null)}
                 />
             )}
 
@@ -76,6 +105,7 @@ export default function IncidentDashboard() {
                 <IncidentList
                     incidents={incidents}
                     onDelete={handleDelete}
+                    onEdit={handleEdit}
                     title="Incidents"
                 />
             </div>

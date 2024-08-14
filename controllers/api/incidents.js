@@ -44,5 +44,17 @@ async function deleteIncident(req, res) {
 }
 
 async function updateIncident(req, res) {
-
+    try {
+        const incident = await Incident.findOneAndUpdate(
+            {
+                _id: req.params.id,
+                user: req.user._id
+            },
+            req.body,
+            { new: true, runValidators: true });
+        res.status(200).json(incident);
+    } catch (error) {
+        console.log(error);
+        res.status(400).json(error);
+    }
 }
