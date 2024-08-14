@@ -31,9 +31,18 @@ async function createIncident(req, res) {
 }
 
 async function deleteIncident(req, res) {
-
+    try {
+        const incident = await Incident.findOneAndDelete({
+            _id: req.params.id, 
+            user: req.user._id
+        });
+        res.status(201).json(incident)
+    } catch (error) {
+        console.log(error)
+        res.status(400).json(error);
+    }
 }
 
 async function updateIncident(req, res) {
-    
+
 }

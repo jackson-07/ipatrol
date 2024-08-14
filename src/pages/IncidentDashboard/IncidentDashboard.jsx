@@ -45,6 +45,15 @@ export default function IncidentDashboard() {
         }
     };
 
+    const handleDelete = async (incidentId) => {
+        try {
+            await incidentAPI.deleteIncident(incidentId);
+            fetchPatrols();
+        } catch (error) {
+            console.error('Error deleting incident:', error);
+        }
+    };
+
     return (
         <div className="container mx-auto px-4 py-8">
             {!showForm && (
@@ -66,6 +75,7 @@ export default function IncidentDashboard() {
             <div className="incidents-list mt-8">
                 <IncidentList
                     incidents={incidents}
+                    onDelete={handleDelete}
                     title="Incidents"
                 />
             </div>

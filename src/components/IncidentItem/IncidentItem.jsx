@@ -1,7 +1,7 @@
 import DeleteButton from '../DeleteButton/DeleteButton';
 import EditButton from '../EditButton/EditButton';
 
-export default function IncidentItem({ incident }) {
+export default function IncidentItem({ incident, onDelete }) {
     return (
         <li className="border p-4 rounded-lg shadow bg-gray-100 flex justify-between items-center">
             <div>
@@ -13,7 +13,7 @@ export default function IncidentItem({ incident }) {
             </div>
             <div className="flex space-x-2">
                 <EditButton />
-                <DeleteButton />
+                <DeleteButton onClick={() => onDelete(incident._id)}/>
             </div>
         </li>
     );
