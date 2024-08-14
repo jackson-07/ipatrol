@@ -2,21 +2,36 @@ import React, { useState, useEffect } from 'react';
 import IncidentList from '../../components/IncidentList/IncidentList';
 import CreateIncidentForm from '../../components/CreateIncidentForm/CreateIncidentForm'
 import * as incidentAPI from '../../utilities/incidents-api';
+import * as patrolAPI from '../../utilities/patrols-api';
+
 
 export default function IncidentDashboard() {
     const [showForm, setShowForm] = useState(false);
     const [incidents, setIncidents] = useState([]);
+    const [patrols, setPatrols] = useState([]);
+
+    // consider using useContext to stop prop drilling patrol useState
 
     useEffect(() => {
         fetchIncidents();
+        fetchPatrols();
     }, []);
 
     const fetchIncidents = async () => {
         try {
-            const incidents = await incidentAPI.getIncidents();
-            setIncidents(incidents);
+            const incidentsData = await incidentAPI.getIncidents();
+            setIncidents(incidentsData);
         } catch (error) {
             console.error('Failed to fetch incidents:', error);
+        }
+    };
+
+    const fetchPatrols = async () => {
+        try {
+            const patrolData = await patrolAPI.getPatrols();
+            setPatrols(patrolData);
+        } catch (error) {
+            console.error('Error fetching patrols:', error);
         }
     };
 
@@ -42,7 +57,7 @@ export default function IncidentDashboard() {
 
             {showForm && (
                 <CreateIncidentForm 
-                    incidents={incidents}
+                    patrols={patrols}
                     onSubmit={handleSubmit} 
                     onCancel={() => setShowForm(false)} 
                 />

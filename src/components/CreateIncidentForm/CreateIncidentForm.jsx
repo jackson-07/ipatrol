@@ -1,40 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import * as incidentAPI from '../../utilities/incidents-api';
-import * as patrolAPI from '../../utilities/patrols-api'
+import React, { useState } from 'react';
 
-export default function CreateIncidentForm({ onSubmit, onCancel }) {
+export default function CreateIncidentForm({ onSubmit, onCancel, patrols }) {
     const [formData, setFormData] = useState({
         patrol: '',
         incident_time: '',
         description: '',
         actions_taken: '',
     });
-
-    const [patrols, setPatrols] = useState([]);
-    const [incidents, setIncidents] = useState([]);
-
-    useEffect(() => {
-        fetchIncidents();
-        fetchPatrols();
-    }, []);
-
-    const fetchIncidents = async () => {
-        try {
-            const response = await incidentAPI.getIncidents();
-            setIncidents(response);
-        } catch (error) {
-            console.error('Failed to fetch incidents:', error);
-        }
-    };
-
-    const fetchPatrols = async () => {
-        try {
-            const response = await patrolAPI.getPatrols();
-            setPatrols(response);
-        } catch (error) {
-            console.error('Error fetching patrols:', error);
-        }
-    };
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -57,7 +29,8 @@ export default function CreateIncidentForm({ onSubmit, onCancel }) {
                         name="patrol"
                         value={formData.patrol}
                         onChange={handleChange}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-violet-500 focus:ring-violet-500">
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-violet-500 focus:ring-violet-500"
+                    >
                         <option value="">Select a patrol</option>
                         {patrols.length > 0 ? (
                             patrols.map((patrol) => (
