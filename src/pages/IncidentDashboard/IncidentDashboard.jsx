@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import IncidentList from '../../components/IncidentList/IncidentList';
 import CreateIncidentForm from '../../components/CreateIncidentForm/CreateIncidentForm';
-import EditIncidentForm from '../../components/EditIncidentForm/EditIncidentForm'
+import EditIncidentForm from '../../components/EditIncidentForm/EditIncidentForm';
+import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
 import * as incidentAPI from '../../utilities/incidents-api';
 import * as patrolAPI from '../../utilities/patrols-api';
 
@@ -10,6 +11,7 @@ export default function IncidentDashboard() {
     const [incidents, setIncidents] = useState([]);
     const [patrols, setPatrols] = useState([]);
     const [editingIncident, setEditingIncident] = useState(null);
+    const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, incidentId: null });
 
     // consider using useContext to stop prop drilling patrol useState
 
@@ -46,13 +48,24 @@ export default function IncidentDashboard() {
         }
     };
 
-    const handleDelete = async (incidentId) => {
-        try {
-            await incidentAPI.deleteIncident(incidentId);
-            fetchIncidents();
-        } catch (error) {
-            console.error('Error deleting incident:', error);
+    const handleDeleteClick = (incidentId) => {
+        setConfirmDelete({ isOpen: true, incidentId });
+    };
+
+    const handleDeleteCancel = () => {
+        setConfirmDelete({ isOpen: false, incidentId: null });
+    };
+
+    const handleDelete = async () => {
+        if (confirmDelete.incidentId) {
+            try {
+                await incidentAPI.deleteIncident(confirmDelete.incidentId);
+                fetchIncidents();
+            } catch (error) {
+                console.error('Error deleting incident:', error);
+            }
         }
+        setConfirmDelete({ isOpen: false, incidentId: null });
     };
 
     const handleEdit = (incident) => {
@@ -84,10 +97,10 @@ export default function IncidentDashboard() {
             )}
 
             {showForm && !editingIncident && (
-                <CreateIncidentForm 
+                <CreateIncidentForm
                     patrols={patrols}
-                    onSubmit={handleSubmit} 
-                    onCancel={() => setShowForm(false)} 
+                    onSubmit={handleSubmit}
+                    onCancel={() => setShowForm(false)}
                 />
             )}
             {editingIncident && (
@@ -102,11 +115,18 @@ export default function IncidentDashboard() {
             <div className="incidents-list mt-8">
                 <IncidentList
                     incidents={incidents}
-                    onDelete={handleDelete}
+                    onDelete={handleDeleteClick}
                     onEdit={handleEdit}
                     title="Incidents"
                 />
             </div>
+
+            <ConfirmModal
+                isOpen={confirmDelete.isOpen}
+                onConfirm={handleDelete}
+                onCancel={handleDeleteCancel}
+                message="Are you sure you want to delete this incident?"
+            />
         </div>
     );
 }

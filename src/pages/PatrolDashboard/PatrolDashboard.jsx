@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PatrolList from '../../components/PatrolList/PatrolList';
 import EditPatrolForm from '../../components/EditPatrolForm/EditPatrolForm';
 import CreatePatrolForm from '../../components/CreatePatrolForm/CreatePatrolForm';
+import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
 import * as patrolAPI from '../../utilities/patrols-api';
 
 export default function PatrolDashBoard() {
@@ -9,6 +10,7 @@ export default function PatrolDashBoard() {
     const [patrols, setPatrols] = useState([]);
     const [sortedPatrols, setSortedPatrols] = useState({ upcoming: [], completed: [] });
     const [editingPatrol, setEditingPatrol] = useState(null);
+    const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, patrolId: null })
 
     useEffect(() => {
         fetchPatrols();
@@ -50,13 +52,24 @@ export default function PatrolDashBoard() {
         }
     };
 
+    const handleDeleteClick = (patrolId) => {
+        setConfirmDelete({ isOpen: true, patrolId });
+    };
+
+    const handleDeleteCancel = () => {
+        setConfirmDelete({ isOpen: false, patrolId: null });
+    };
+
     const handleDelete = async (patrolId) => {
-        try {
-            await patrolAPI.deletePatrol(patrolId);
-            fetchPatrols();
-        } catch (error) {
-            console.error('Error deleting patrol:', error);
+        if (confirmDelete.patrolId) {
+            try {
+                await patrolAPI.deletePatrol(confirmDelete.patrolId);
+                fetchPatrols();
+            } catch (error) {
+                console.error('Error deleting patrol:', error);
+            }
         }
+        setConfirmDelete({ isOpen: false, patrolId: null });
     };
 
     const handleEdit = (patrol) => {
@@ -88,9 +101,9 @@ export default function PatrolDashBoard() {
             )}
 
             {showForm && !editingPatrol && (
-                <CreatePatrolForm 
-                    onSubmit={handleSubmit} 
-                    onCancel={() => setShowForm(false)} 
+                <CreatePatrolForm
+                    onSubmit={handleSubmit}
+                    onCancel={() => setShowForm(false)}
                 />
             )}
             {editingPatrol && (
@@ -104,16 +117,22 @@ export default function PatrolDashBoard() {
             <div className="patrols-list mt-8">
                 <PatrolList
                     patrols={sortedPatrols.upcoming}
-                    onDelete={handleDelete}
+                    onDelete={handleDeleteClick}
                     onEdit={handleEdit}
                     title="Upcoming Patrols"
                 />
                 <br />
                 <PatrolList
                     patrols={sortedPatrols.completed}
-                    onDelete={handleDelete}
+                    onDelete={handleDeleteClick}
                     onEdit={handleEdit}
                     title="Completed Patrols"
+                />
+                <ConfirmModal
+                    isOpen={confirmDelete.isOpen}
+                    onConfirm={handleDelete}
+                    onCancel={handleDeleteCancel}
+                    message="Are you sure you want to delete this patrol?"
                 />
             </div>
         </div>
