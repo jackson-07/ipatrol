@@ -4,7 +4,6 @@ export default function CreatePatrolForm({ onSubmit, onCancel }) {
     const [formData, setFormData] = useState({
         start_time: '',
         end_time: '',
-        total_hours: '',
     });
 
     const handleChange = (e) => {
@@ -13,10 +12,15 @@ export default function CreatePatrolForm({ onSubmit, onCancel }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        const startTime = new Date(formData.start_time);
+        const endTime = new Date(formData.end_time);
+        const totalHours = (endTime - startTime) / (1000 * 60 * 60); 
+
         const submitData = {
             ...formData,
-            start_time: new Date(formData.start_time).toISOString(),
-            end_time: new Date(formData.end_time).toISOString(),
+            start_time: startTime.toISOString(),
+            end_time: endTime.toISOString(),
+            total_hours: totalHours
         };
         onSubmit(submitData);
     };
@@ -44,18 +48,6 @@ export default function CreatePatrolForm({ onSubmit, onCancel }) {
                         name="end_time"
                         value={formData.end_time}
                         onChange={handleChange}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-violet-500 focus:ring-violet-500"
-                    />
-                </div>
-                <div>
-                    <label htmlFor="total_hours" className="block text-sm font-medium text-gray-700">Total Hours</label>
-                    <input
-                        type="number"
-                        id="total_hours"
-                        name="total_hours"
-                        value={formData.total_hours}
-                        onChange={handleChange}
-                        step="0.01"
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-violet-500 focus:ring-violet-500"
                     />
                 </div>
