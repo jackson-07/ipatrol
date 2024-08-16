@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const incidentSchema = new mongoose.Schema({
     patrol: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Patrol' },
-    incident_time: { type: Date, required: true },
+    incident_time: { type: String, required: true },
     description: { type: String, required: true },
     actions_taken: { type: String, required: true }
   });

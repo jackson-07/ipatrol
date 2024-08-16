@@ -46,7 +46,7 @@ export default function CreateIncidentForm({ onSubmit, onCancel, patrols }) {
                 <div>
                     <label htmlFor="incident_time" className="block text-sm font-medium text-gray-700">Incident Time</label>
                     <input
-                        type="datetime-local"
+                        type="time"
                         id="incident_time"
                         name="incident_time"
                         value={formData.incident_time}
