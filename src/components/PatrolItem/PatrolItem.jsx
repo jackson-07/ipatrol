@@ -7,6 +7,7 @@ export default function PatrolItem({ patrol, onDelete, onEdit }) {
             <div>
                 <p><strong>Start Time:</strong> {new Date(patrol.start_time).toLocaleString()}</p>
                 <p><strong>End Time:</strong> {new Date(patrol.end_time).toLocaleString()}</p>
+                <p><strong>Location:</strong> {patrol.location}</p>
                 <p><strong>Total Hours:</strong> {patrol.total_hours}</p>
             </div>
             <div className="flex space-x-2">

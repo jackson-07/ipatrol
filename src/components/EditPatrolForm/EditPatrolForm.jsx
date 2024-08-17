@@ -1,100 +1,18 @@
-// import React, { useState } from 'react';
-
-// export default function EditPatrolForm({ patrol, onSubmit, onCancel }) {
-
-//     const formatDateForInput = (dateString) => {
-//         const date = new Date(dateString);
-//         const timezoneOffset = date.getTimezoneOffset() * 60000; 
-//         const localDate = new Date(date.getTime() - timezoneOffset);
-//         return localDate.toISOString().slice(0, 16);
-//     };
-
-//     const [formData, setFormData] = useState({
-//         start_time: formatDateForInput(patrol.start_time),
-//         end_time: formatDateForInput(patrol.end_time),
-//         total_hours: patrol.total_hours,
-//     });
-
-//     const handleChange = (e) => {
-//         setFormData({ ...formData, [e.target.name]: e.target.value });
-//     };
-
-//     const handleSubmit = (e) => {
-//         e.preventDefault();
-//         const submitData = {
-//             ...formData,
-//             start_time: new Date(formData.start_time).toISOString(),
-//             end_time: new Date(formData.end_time).toISOString(),
-//         };
-//         onSubmit({ ...patrol, ...submitData });
-//     };
-
-//     return (
-//         <div className="bg-white p-6 rounded-lg shadow-md">
-//             <h2 className="text-2xl font-bold mb-4 text-violet-600">Edit Patrol</h2>
-//             <form onSubmit={handleSubmit} className="space-y-4">
-//                 <div>
-//                     <label htmlFor="start_time" className="block text-sm font-medium text-gray-700">Start Time</label>
-//                     <input
-//                         type="datetime-local"
-//                         id="start_time"
-//                         name="start_time"
-//                         value={formData.start_time}
-//                         onChange={handleChange}
-//                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-violet-500 focus:ring-violet-500"
-//                     />
-//                 </div>
-//                 <div>
-//                     <label htmlFor="end_time" className="block text-sm font-medium text-gray-700">End Time</label>
-//                     <input
-//                         type="datetime-local"
-//                         id="end_time"
-//                         name="end_time"
-//                         value={formData.end_time}
-//                         onChange={handleChange}
-//                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-violet-500 focus:ring-violet-500"
-//                     />
-//                 </div>
-//                 <div>
-//                     <label htmlFor="total_hours" className="block text-sm font-medium text-gray-700">Total Hours</label>
-//                     <input
-//                         type="number"
-//                         id="total_hours"
-//                         name="total_hours"
-//                         value={formData.total_hours}
-//                         onChange={handleChange}
-//                         step="0.01"
-//                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-violet-500 focus:ring-violet-500"
-//                     />
-//                 </div>
-//                 <div className="flex justify-end space-x-2">
-//                     <button type="submit" className="bg-violet-500 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded">
-//                         Update Patrol
-//                     </button>
-//                     <button type="button" onClick={onCancel} className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">
-//                         Cancel
-//                     </button>
-//                 </div>
-//             </form>
-//         </div>
-//     );
-// }
-
 import React, { useState, useEffect } from 'react';
 
 export default function EditPatrolForm({ patrol, onSubmit, onCancel }) {
     const [formData, setFormData] = useState({
         start_time: '',
         end_time: '',
+        location: '',
     });
 
     useEffect(() => {
-        if (patrol) {
             setFormData({
                 start_time: new Date(patrol.start_time).toISOString().slice(0, 16),
                 end_time: new Date(patrol.end_time).toISOString().slice(0, 16),
+                location: patrol.location
             });
-        }
     }, [patrol]);
 
     const handleChange = (e) => {
@@ -105,7 +23,7 @@ export default function EditPatrolForm({ patrol, onSubmit, onCancel }) {
         e.preventDefault();
         const startTime = new Date(formData.start_time);
         const endTime = new Date(formData.end_time);
-        const totalHours = (endTime - startTime) / (1000 * 60 * 60); // Convert milliseconds to hours
+        const totalHours = (endTime - startTime) / (1000 * 60 * 60); 
 
         const updatedPatrol = {
             ...patrol,
@@ -139,6 +57,17 @@ export default function EditPatrolForm({ patrol, onSubmit, onCancel }) {
                         id="end_time"
                         name="end_time"
                         value={formData.end_time}
+                        onChange={handleChange}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-violet-500 focus:ring-violet-500"
+                    />
+                </div>
+                <div>
+                    <label htmlFor="location" className="block text-sm font-medium text-gray-700">Location</label>
+                    <input
+                        type="text"
+                        id="location"
+                        name="location"
+                        value={formData.location}
                         onChange={handleChange}
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-violet-500 focus:ring-violet-500"
                     />

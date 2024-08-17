@@ -4,6 +4,7 @@ export default function CreatePatrolForm({ onSubmit, onCancel }) {
     const [formData, setFormData] = useState({
         start_time: '',
         end_time: '',
+        location: '',
     });
 
     const handleChange = (e) => {
@@ -14,7 +15,7 @@ export default function CreatePatrolForm({ onSubmit, onCancel }) {
         e.preventDefault();
         const startTime = new Date(formData.start_time);
         const endTime = new Date(formData.end_time);
-        const totalHours = (endTime - startTime) / (1000 * 60 * 60); 
+        const totalHours = (endTime - startTime) / (1000 * 60 * 60);
 
         const submitData = {
             ...formData,
@@ -49,6 +50,18 @@ export default function CreatePatrolForm({ onSubmit, onCancel }) {
                         value={formData.end_time}
                         onChange={handleChange}
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-violet-500 focus:ring-violet-500"
+                    />
+                </div>
+                <div>
+                    <label htmlFor="location" className="block text-sm font-medium text-gray-700">Location</label>
+                    <input
+                        type="text"
+                        id="location"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleChange}
+                        required
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                     />
                 </div>
                 <div className="flex justify-end space-x-2">
