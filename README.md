@@ -19,3 +19,11 @@ An application designed to streamline patrol management and incident reporting f
 ## ERD
 
 ![erd](/public/iPatrol.png)
+
+## Wire Frames
+
+![patrol-wf](/public/Patrol-Wireframe.png) 
+
+<br/>
+
+![incident-wf](/public/Incident-Wireframe.png)
